@@ -37,7 +37,7 @@ python3 manage.py runserver
 ### Run tests
 
 ```
-pytest
+python3 manage.py test
 ```
 
 ## API documentation (provided by Swagger UI)
