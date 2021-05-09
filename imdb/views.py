@@ -32,6 +32,26 @@ def search_movies(request, query_string,  *args, **kwargs):
         return Response({'msg': 'Some Execption Occured.', 'Execption': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(**docs.get_movie_by_id)
+@csrf_exempt
+@api_view(("GET",))
+@permission_classes((AllowAny,))
+def get_movie_by_id(request, movie_id,  *args, **kwargs):
+    """
+    API view for getting Movie by id
+    """
+    movie_serializer_class = MovieSerializer
+    try:
+        movie = Movie.objects.filter(id=movie_id)
+        if movie.exists():
+            return Response({'data': MovieSerializer(movie.first()).data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'msg': 'Movie does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'msg': 'Some Execption Occured.', 'Execption': e},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @swagger_auto_schema(**docs.create_movie)
 @csrf_exempt
 @api_view(("POST",))
@@ -41,37 +61,36 @@ def create_movies(request, *args, **kwargs):
     API view for creating Movies
     """
     movie_serializer_class = MovieSerializer
-    queryset = Movie.objects.all()
     serializer = movie_serializer_class(data=request.data)
-    # try:
-    serializer.is_valid(raise_exception=True)
-    data = serializer.validated_data
-    name = data['name']
-    director = data['director']
-    genre = data['genre']
-    genre_objs = []
-    for genre_obj in genre:
-        if not Genre.objects.filter(name=genre_obj['name']).exists():
-            g = Genre.objects.create(name=genre_obj['name'])
-            g.save()
-            genre_objs.append(g)
-        else:
-            g = Genre.objects.get(name=genre_obj['name'])
-            genre_objs.append(g)
+    try:
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        name = data['name']
+        director = data['director']
+        genre = data['genre']
+        genre_objs = []
+        for genre_obj in genre:
+            if not Genre.objects.filter(name=genre_obj['name']).exists():
+                g = Genre.objects.create(name=genre_obj['name'])
+                g.save()
+                genre_objs.append(g)
+            else:
+                g = Genre.objects.get(name=genre_obj['name'])
+                genre_objs.append(g)
 
-    popularity = data['popularity']
-    imdb_score = data['imdb_score']
-    movie = Movie.objects.create(
-        name=name,
-        director=director,
-        popularity=popularity,
-        imdb_score=imdb_score
-    )
-    movie.save()
-    movie.genre.add(*genre_objs)
-    return Response({'msg': 'Movie created.'}, status=status.HTTP_201_CREATED)
-    # except Exception as e:
-    #     return Response({'msg': 'Some Execption Occured.', 'Execption': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        popularity = data['popularity']
+        imdb_score = data['imdb_score']
+        movie = Movie.objects.create(
+            name=name,
+            director=director,
+            popularity=popularity,
+            imdb_score=imdb_score
+        )
+        movie.save()
+        movie.genre.add(*genre_objs)
+        return Response({'msg': 'Movie created.'}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({'msg': 'Some Execption Occured.', 'Execption': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @swagger_auto_schema(**docs.update_movie)
@@ -80,7 +99,7 @@ def create_movies(request, *args, **kwargs):
 @permission_classes((IsAdminUser,))
 def update_movies(request, movie_id, *args, **kwargs):
     """
-    API view for deleting Movies
+    API view for update Movies
     """
     movie_serializer_class = MovieSerializer
     queryset = Movie.objects.all()

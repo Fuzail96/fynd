@@ -11,6 +11,15 @@ search_movie = {
     }
 }
 
+get_movie_by_id = {
+    "operation_description": "Get Movie By Id",
+    "method": "GET",
+    "responses": {
+        200 : MovieSerializer,
+        400 : 'Movie does not exist.',
+        500 : 'Some Execption Occured.'
+    }
+}
 
 create_movie = {
     "operation_description": "Create Movie",

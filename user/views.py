@@ -57,9 +57,7 @@ def login(request):
         data = serializer.validated_data
         email = data['email']
         password = data['password']
-        print(email, password)
         user = auth.authenticate(username=email, password=password)
-        print(user)
         if user:
             user = User.objects.get(email=email)
             data = {
