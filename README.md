@@ -48,4 +48,4 @@ http://127.0.0.1:8000/docs/
 
 ### Deployment on Heroku
 
-For deployment on heroku refer [this](https://www.tutlinks.com/create-and-deploy-fastapi-app-to-heroku/) article
+For deployment on heroku refer [this](https://simpleisbetterthancomplex.com/tutorial/2016/08/09/how-to-deploy-django-applications-on-heroku.html) article
